@@ -3,7 +3,9 @@
 
 name: Python application
 
-on: [workflow_dispatch]
+on:
+  schedule:
+    - cron: '30 11 * * *' # runs at 11:30 UTC every day
 
 permissions:
   contents: write
@@ -15,6 +17,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
@@ -34,12 +37,19 @@ jobs:
     - name: Update calendar
       run: |
         python main.py
+    - name: Check if there are any changes
+      id: verify_diff
+      run: |
+          git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
+
     - name: Commit changes
+      if: steps.verify_diff.outputs.changed == 'true'
       run: |
         git config --global user.name 'RegoFp' # set the git user name
         git config --global user.email 'danregcal@gmail.com' # set the git user email
+        
         git add calendar.ics # add the updated .ics file
         git add EE_calendar.ics
         git add Emiru_calendar.ics
-        git commit -m 'calendar update' # commit the changes
+        git commit -m 'calendar update'  # commit the changes
         git push # push the changes to the repository
