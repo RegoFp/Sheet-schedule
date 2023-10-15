@@ -39,5 +39,7 @@ jobs:
         git config --global user.name 'RegoFp' # set the git user name
         git config --global user.email 'danregcal@gmail.com' # set the git user email
         git add calendar.ics # add the updated .ics file
+        git add EE_calendar.ics
+        git add Emiru_calendar.ics
         git commit -m 'calendar update' # commit the changes
         git push # push the changes to the repository
