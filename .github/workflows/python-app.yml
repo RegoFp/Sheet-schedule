@@ -3,9 +3,7 @@
 
 name: Python application
 
-on:
-  schedule:
-    - cron: '30 11 * * *' # runs at 11:30 UTC every day
+on: [workflow_dispatch]
 
 permissions:
   contents: read
