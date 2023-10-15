@@ -27,7 +27,7 @@ jobs:
     - name: Create Google Services JSON File
       env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_ACCOUNT }}
-      run: echo $GOOGLE_SERVICES_JSON | base64 -di > ./service_account.json
+      run: echo $GOOGLE_SERVICES_JSON | base64 -di > tmp/service_account.json
     - name: Update calendar
       run: |
         python main.py

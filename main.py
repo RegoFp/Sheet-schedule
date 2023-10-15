@@ -46,7 +46,7 @@ def read_day(box, sh):
 
 
 def read_miz_schedule(cal):
-    gc = gspread.service_account(filename="service_account.json")
+    gc = gspread.service_account(filename="tmp/service_account.json")
 
     sh = gc.open_by_url(
         'https://docs.google.com/spreadsheets/d/1cJyQsoi07DV7NIaWi9ywLEMLa6wWVzWgus0fQX8dcnc/edit#gid=902918299')
@@ -66,7 +66,7 @@ def read_miz_schedule(cal):
 
 
 def read_ee_schedule(cal):
-    gc = gspread.service_account(filename="service_account.json")
+    gc = gspread.service_account(filename="tmp/service_account.json")
 
     sh = gc.open_by_url(
         'https://docs.google.com/spreadsheets/d/1hJ5FJCXeaTRPb8ROR-PiEzMYKb3U7Z35ujn6mSzzHKg/edit#gid=0')
@@ -119,7 +119,7 @@ def read_emiru_schedule():
 
     calendar = get_calendar(calendar_path)
 
-    gc = gspread.service_account(filename="service_account.json")
+    gc = gspread.service_account(filename="tmp/service_account.json")
 
     sh = gc.open_by_url(
         'https://docs.google.com/spreadsheets/d/1WFuxI2R5iLzt7x0k1LVV9Te5uQEb2X6CS5vc_VYC-AQ/edit#gid=2084945952')
