@@ -60,7 +60,15 @@ def read_miz_schedule(cal):
         event.add('description', "https://www.twitch.tv/mizkif")
         event.add('dtstart', stream.start, parameters={'TZID': 'US/Central'})
 
-        cal.add_component(event)
+        can_add = True
+
+        for compontent in cal.walk("VEVENT"):
+            if compontent["summary"] == event["summary"]:
+                can_add = False
+                # compontent['status'] = vText('CANCELLED')
+
+        if can_add:
+            cal.add_component(event)
 
     return cal
 
