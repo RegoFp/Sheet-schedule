@@ -1,6 +1,5 @@
 import re
 import time
-from dataclasses import dataclass
 from datetime import datetime
 
 import gspread
@@ -10,12 +9,6 @@ from os.path import exists
 import os
 
 from dateutil import parser
-
-
-@dataclass
-class Stream:
-    title: str
-    start: datetime
 
 
 def read_day(box, sh):
@@ -47,7 +40,7 @@ def read_day(box, sh):
 def read_miz_schedule():
     # Get calendar
     calendar_path = "calendar.ics"
-    cal = get_calendar(calendar_path)
+    cal = load_calendar(calendar_path)
 
     # Load service account
     gc = gspread.service_account(filename="tmp/service_account.json")
@@ -63,7 +56,6 @@ def read_miz_schedule():
 
     # find the 1st 10 dates
     cells = sh.get_worksheet(0).findall(date_regex, in_column=2)
-    events = []
 
     print("  new events:")
     for day in cells:
@@ -71,7 +63,6 @@ def read_miz_schedule():
         # repeat until the API doesn't return an error
         while True:
             try:
-                # TODO make this return an event object directly
                 event = read_day(day.row, sh)
 
                 can_add = True
@@ -83,7 +74,6 @@ def read_miz_schedule():
                 if can_add:
                     cal.add_component(event)
 
-
             except gspread.exceptions.APIError:
                 print("API limit reached, waiting 70 seconds")
                 time.sleep(70)
@@ -93,14 +83,13 @@ def read_miz_schedule():
         if counter == 11:
             break
 
-
-    save(cal, calendar_path)
+    save_calendar(cal, calendar_path)
 
 
 def read_ee_schedule():
     calendar_path = "EE_calendar.ics"
 
-    cal = get_calendar(calendar_path)
+    cal = load_calendar(calendar_path)
 
     gc = gspread.service_account(filename="tmp/service_account.json")
 
@@ -156,13 +145,13 @@ def read_ee_schedule():
             print("    " + event["summary"])
             cal.add_component(event)
 
-    save(cal, calendar_path)
+    save_calendar(cal, calendar_path)
 
 
 def read_emiru_schedule():
     calendar_path = "Emiru_calendar.ics"
 
-    calendar = get_calendar(calendar_path)
+    calendar = load_calendar(calendar_path)
 
     gc = gspread.service_account(filename="tmp/service_account.json")
 
@@ -212,11 +201,11 @@ def read_emiru_schedule():
             print(event["summary"])
             calendar.add_component(event)
 
-    save(calendar, calendar_path)
+    save_calendar(calendar, calendar_path)
 
 
 # Reads the calendar
-def get_calendar(calendar_path):
+def load_calendar(calendar_path):
     calendar = Calendar()
 
     if not exists(calendar_path):
@@ -247,7 +236,9 @@ def get_calendar(calendar_path):
 
 
 # Saves the calendar
-def save(cal, calendar_path):
+def save_calendar(cal, calendar_path):
+
+    # If the calendar already exists deletes it
     if exists(calendar_path):
         os.remove(calendar_path)
 
