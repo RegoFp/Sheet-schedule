@@ -33,24 +33,26 @@ def read_day(box, sh):
     date_object = date_object.replace(datetime.today().year)
     date_object = date_object.replace(tzinfo=pytz.timezone('US/Central'))
 
-    stream = Stream(
-        title=sh.sheet1.cell(box + 2, 5).value,
-        start=date_object
-    )
+    event = Event()
+    event.add('summary', sh.sheet1.cell(box + 2, 5).value)
+    event.add('description', "https://www.twitch.tv/mizkif")
+    event.add('dtstart', date_object)
 
-    print("    " + stream.title)
+    print("    " + event["summary"])
     # Add stream
 
-    return stream
+    return event
 
 
 def read_miz_schedule():
+    # Get calendar
     calendar_path = "calendar.ics"
-
     cal = get_calendar(calendar_path)
 
+    # Load service account
     gc = gspread.service_account(filename="tmp/service_account.json")
 
+    # Load spreadsheet
     sh = gc.open_by_url(
         'https://docs.google.com/spreadsheets/d/1cJyQsoi07DV7NIaWi9ywLEMLa6wWVzWgus0fQX8dcnc/edit#gid=902918299')
 
@@ -70,7 +72,18 @@ def read_miz_schedule():
         while True:
             try:
                 # TODO make this return an event object directly
-                events.append(read_day(day.row, sh))
+                event = read_day(day.row, sh)
+
+                can_add = True
+
+                for compontent in cal.walk("VEVENT"):
+                    if compontent["summary"] == event["summary"]:
+                        can_add = False
+
+                if can_add:
+                    cal.add_component(event)
+
+
             except gspread.exceptions.APIError:
                 print("API limit reached, waiting 70 seconds")
                 time.sleep(70)
@@ -80,20 +93,6 @@ def read_miz_schedule():
         if counter == 11:
             break
 
-    for stream in events:
-        event = Event()
-        event.add('summary', stream.title)
-        event.add('description', "https://www.twitch.tv/mizkif")
-        event.add('dtstart', stream.start, parameters={'TZID': 'US/Central'})
-
-        can_add = True
-
-        for compontent in cal.walk("VEVENT"):
-            if compontent["summary"] == event["summary"]:
-                can_add = False
-
-        if can_add:
-            cal.add_component(event)
 
     save(cal, calendar_path)
 
