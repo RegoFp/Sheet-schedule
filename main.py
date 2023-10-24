@@ -36,7 +36,7 @@ def read_day(box, sh):
         start=date_object
     )
 
-    print(stream)
+    print("    " + stream.title)
     # Add stream
 
     return stream
@@ -57,6 +57,7 @@ def read_miz_schedule(cal):
     cells = sh.get_worksheet(0).findall(date_regex, in_column=2)
     events = []
 
+    print("  new events:")
     for day in cells:
 
         # repeat until the API doesn't return an error
@@ -101,14 +102,13 @@ def read_ee_schedule(cal):
     # Searches for all boxes with a date
     cells = sh.get_worksheet(0).findall(date_regex, in_column=4)
 
+    print("  new events:")
     for cell in cells:
         while True:
             try:
-                print(cell.value)
                 date_string = cell.value.split("|")
 
                 date_string = date_string[0][:-3] + date_string[2]
-                print(date_string)
                 format_string = "%B %d %I:%M%p %Z"
 
                 datetime_object = parser.parse(date_string)
@@ -142,6 +142,7 @@ def read_ee_schedule(cal):
                 # compontent['status'] = vText('CANCELLED')
 
         if can_add:
+            print("    " + event["summary"])
             cal.add_component(event)
 
     return cal
@@ -161,13 +162,13 @@ def read_emiru_schedule():
 
     cells = sh.get_worksheet(0).findall(regex, in_column=2)
 
+    print("  new events:")
     for cell in cells:
         while True:
             try:
                 datetime_object = parser.parse(
                     cell.value + " " + sh.get_worksheet(0).cell(cell.row + 1, cell.col + 3).value)
 
-                print(datetime_object)
                 title_string = sh.get_worksheet(0).cell(cell.row, cell.col + 3).value
 
                 description_string = sh.get_worksheet(0).cell(cell.row + 2, cell.col + 3).value
@@ -183,6 +184,7 @@ def read_emiru_schedule():
         event.add('description', description_string)
         event.add('dtstart', datetime_object, parameters={'TZID': 'US/Central'})
 
+
         if "❌" in title_string:
             event['status'] = vText('CANCELLED')
 
@@ -194,6 +196,7 @@ def read_emiru_schedule():
                 can_add = False
 
         if can_add:
+            print(event["summary"])
             calendar.add_component(event)
 
     save(calendar, calendar_path)
@@ -215,12 +218,15 @@ def get_calendar(calendar_path):
     with open(calendar_path, "rb") as f:
         old_calendar = Calendar.from_ical(f.read())
 
+    print("  old events:")
     for event in old_calendar.walk('VEVENT'):
         start_date = event.get("dtstart").dt.date()
         # Check if it matches the target date
+
         if start_date < datetime.today().date():
             # Print the summary of the event
-            print(event.get("summary"))
+
+            print("    " + event.get("summary"))
             # Delete the event from the calendar
             calendar.add_component(event)
 
@@ -258,6 +264,9 @@ def get_ee_schedule():
 
 
 if __name__ == '__main__':
+    print("MIZ")
     get_miz_schedule()
+    print("ExtraEmily")
     get_ee_schedule()
+    print("Emiru")
     read_emiru_schedule()
