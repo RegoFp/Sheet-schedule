@@ -20,6 +20,7 @@ class Stream:
 
 def read_day(box, sh):
     time_str = sh.sheet1.cell(box + 1, 5).value
+    time_str = time_str.replace("CT", "UTC-5")
     date_object = parser.parse(time_str)
 
     date_str = sh.sheet1.cell(box, 2).value  # month/day
@@ -109,6 +110,7 @@ def read_ee_schedule(cal):
                 date_string = cell.value.split("|")
 
                 date_string = date_string[0][:-3] + date_string[2]
+                date_string = date_string.replace("CT", "UTC-5")
                 format_string = "%B %d %I:%M%p %Z"
 
                 datetime_object = parser.parse(date_string)
