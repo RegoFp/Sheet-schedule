@@ -5,12 +5,9 @@ from datetime import datetime
 
 import gspread
 import pytz
-import x_wr_timezone
-from icalendar import Calendar, Event, vCalAddress, vText
+from icalendar import Calendar, Event, vText
 from os.path import exists
-from pathlib import Path
 import os
-from icalevents.icalevents import events
 
 from dateutil import parser
 
@@ -51,8 +48,29 @@ def read_miz_schedule(cal):
     sh = gc.open_by_url(
         'https://docs.google.com/spreadsheets/d/1cJyQsoi07DV7NIaWi9ywLEMLa6wWVzWgus0fQX8dcnc/edit#gid=902918299')
 
-    events = [read_day(12, sh), read_day(20, sh), read_day(28, sh), read_day(36, sh), read_day(44, sh),
-              read_day(52, sh), read_day(60, sh), read_day(68, sh), read_day(76, sh)]
+    # regex for a date in the format mm/dd
+    date_regex = re.compile(r"^(0?[1-9]|1[0-2])/(0?[1-9]|[12][0-9]|3[01])$")
+
+    counter = 0
+
+    # find the 1st dates
+    cells = sh.get_worksheet(0).findall(date_regex, in_column=2)
+    events = []
+
+    for day in cells:
+
+        # repeat until the API doesn't return an error
+        while True:
+            try:
+                events.append(read_day(day.row, sh))
+            except gspread.exceptions.APIError:
+                print("API limit reached, waiting 70 seconds")
+                time.sleep(70)
+            break
+
+        counter = counter + 1
+        if counter == 11:
+            break
 
     for stream in events:
         event = Event()
@@ -65,7 +83,6 @@ def read_miz_schedule(cal):
         for compontent in cal.walk("VEVENT"):
             if compontent["summary"] == event["summary"]:
                 can_add = False
-                # compontent['status'] = vText('CANCELLED')
 
         if can_add:
             cal.add_component(event)
@@ -85,24 +102,32 @@ def read_ee_schedule(cal):
     cells = sh.get_worksheet(0).findall(date_regex, in_column=4)
 
     for cell in cells:
-        print(cell.value)
-        date_string = cell.value.split("|")
+        while True:
+            try:
+                print(cell.value)
+                date_string = cell.value.split("|")
 
-        date_string = date_string[0][:-3] + date_string[2]
-        print(date_string)
-        format_string = "%B %d %I:%M%p %Z"
+                date_string = date_string[0][:-3] + date_string[2]
+                print(date_string)
+                format_string = "%B %d %I:%M%p %Z"
 
-        datetime_object = parser.parse(date_string)
+                datetime_object = parser.parse(date_string)
 
-        title_string = sh.get_worksheet(0).cell(cell.row + 3, 4).value
+                title_string = sh.get_worksheet(0).cell(cell.row + 3, 4).value
 
-        description_string = sh.get_worksheet(0).cell(cell.row + 5, 4).value
+                description_string = sh.get_worksheet(0).cell(cell.row + 5, 4).value
 
-        if description_string is None:
-            description_string = sh.get_worksheet(0).cell(cell.row + 6, 4).value
-            collab_url = sh.get_worksheet(0).cell(cell.row + 4, 4).value
+                if description_string is None:
+                    description_string = sh.get_worksheet(0).cell(cell.row + 6, 4).value
+                    collab_url = sh.get_worksheet(0).cell(cell.row + 4, 4).value
 
-            description_string = collab_url + "\n" + description_string
+                    description_string = collab_url + "\n" + description_string
+
+                break
+
+            except gspread.exceptions.APIError:
+                print("API limit reached, waiting 70 seconds")
+                time.sleep(70)
 
         event = Event()
         event.add('summary', title_string)
@@ -137,12 +162,21 @@ def read_emiru_schedule():
     cells = sh.get_worksheet(0).findall(regex, in_column=2)
 
     for cell in cells:
-        datetime_object = parser.parse(cell.value + " " + sh.get_worksheet(0).cell(cell.row + 1, cell.col + 3).value)
+        while True:
+            try:
+                datetime_object = parser.parse(
+                    cell.value + " " + sh.get_worksheet(0).cell(cell.row + 1, cell.col + 3).value)
 
-        print(datetime_object)
-        title_string = sh.get_worksheet(0).cell(cell.row, cell.col + 3).value
+                print(datetime_object)
+                title_string = sh.get_worksheet(0).cell(cell.row, cell.col + 3).value
 
-        description_string = sh.get_worksheet(0).cell(cell.row + 2, cell.col + 3).value
+                description_string = sh.get_worksheet(0).cell(cell.row + 2, cell.col + 3).value
+
+                break
+
+            except gspread.exceptions.APIError:
+                print("API limit reached, waiting 70 seconds")
+                time.sleep(70)
 
         event = Event()
         event.add('summary', title_string)
@@ -225,9 +259,5 @@ def get_ee_schedule():
 
 if __name__ == '__main__':
     get_miz_schedule()
-    time.sleep(100)
-
     get_ee_schedule()
-    time.sleep(100)
-
     read_emiru_schedule()
