@@ -21,6 +21,7 @@ class Stream:
 def read_day(box, sh):
     time_str = sh.sheet1.cell(box + 1, 5).value
     time_str = time_str.replace("CT", "UTC-5")
+    time_str = time_str.replace("PT", "UTC-6")
     date_object = parser.parse(time_str)
 
     date_str = sh.sheet1.cell(box, 2).value  # month/day
@@ -43,7 +44,11 @@ def read_day(box, sh):
     return stream
 
 
-def read_miz_schedule(cal):
+def read_miz_schedule():
+    calendar_path = "calendar.ics"
+
+    cal = get_calendar(calendar_path)
+
     gc = gspread.service_account(filename="tmp/service_account.json")
 
     sh = gc.open_by_url(
@@ -54,7 +59,7 @@ def read_miz_schedule(cal):
 
     counter = 0
 
-    # find the 1st dates
+    # find the 1st 10 dates
     cells = sh.get_worksheet(0).findall(date_regex, in_column=2)
     events = []
 
@@ -64,6 +69,7 @@ def read_miz_schedule(cal):
         # repeat until the API doesn't return an error
         while True:
             try:
+                # TODO make this return an event object directly
                 events.append(read_day(day.row, sh))
             except gspread.exceptions.APIError:
                 print("API limit reached, waiting 70 seconds")
@@ -89,10 +95,14 @@ def read_miz_schedule(cal):
         if can_add:
             cal.add_component(event)
 
-    return cal
+    save(cal, calendar_path)
 
 
-def read_ee_schedule(cal):
+def read_ee_schedule():
+    calendar_path = "EE_calendar.ics"
+
+    cal = get_calendar(calendar_path)
+
     gc = gspread.service_account(filename="tmp/service_account.json")
 
     sh = gc.open_by_url(
@@ -111,7 +121,7 @@ def read_ee_schedule(cal):
 
                 date_string = date_string[0][:-3] + date_string[2]
                 date_string = date_string.replace("CT", "UTC-5")
-                format_string = "%B %d %I:%M%p %Z"
+                date_string = date_string.replace("PT", "UTC-6")
 
                 datetime_object = parser.parse(date_string)
 
@@ -147,7 +157,7 @@ def read_ee_schedule(cal):
             print("    " + event["summary"])
             cal.add_component(event)
 
-    return cal
+    save(cal, calendar_path)
 
 
 def read_emiru_schedule():
@@ -168,8 +178,11 @@ def read_emiru_schedule():
     for cell in cells:
         while True:
             try:
-                datetime_object = parser.parse(
-                    cell.value + " " + sh.get_worksheet(0).cell(cell.row + 1, cell.col + 3).value)
+                date_string = sh.get_worksheet(0).cell(cell.row + 1, cell.col + 3).value
+                date_string = date_string.replace("CT", "UTC-5")
+                date_string = date_string.replace("PT", "UTC-6")
+
+                datetime_object = parser.parse(cell.value + " " + date_string)
 
                 title_string = sh.get_worksheet(0).cell(cell.row, cell.col + 3).value
 
@@ -185,7 +198,6 @@ def read_emiru_schedule():
         event.add('summary', title_string)
         event.add('description', description_string)
         event.add('dtstart', datetime_object, parameters={'TZID': 'US/Central'})
-
 
         if "❌" in title_string:
             event['status'] = vText('CANCELLED')
@@ -245,30 +257,12 @@ def save(cal, calendar_path):
     f.close()
 
 
-def get_miz_schedule():
-    calendar_path = "calendar.ics"
-
-    cal = get_calendar(calendar_path)
-
-    cal = read_miz_schedule(cal)
-
-    save(cal, calendar_path)
-
-
-def get_ee_schedule():
-    calendar_path = "EE_calendar.ics"
-
-    calendar = get_calendar(calendar_path)
-
-    calendar = read_ee_schedule(calendar)
-
-    save(calendar, calendar_path)
-
-
 if __name__ == '__main__':
-    print("MIZ")
-    get_miz_schedule()
+    print("Miz")
+    read_miz_schedule()
+
     print("ExtraEmily")
-    get_ee_schedule()
+    read_ee_schedule()
+
     print("Emiru")
     read_emiru_schedule()
