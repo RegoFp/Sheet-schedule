@@ -161,7 +161,6 @@ def read_emiru_schedule():
     regex = re.compile(r"\d{2}/\d{2}")
 
     cells = sh.get_worksheet(0).findall(regex, in_column=2)
-
     print("  new events:")
     for cell in cells:
         while True:
@@ -194,11 +193,11 @@ def read_emiru_schedule():
 
         # TODO turn this into a method, since ee and emiru use it
         for compontent in calendar.walk("VEVENT"):
-            if compontent["summary"] == event["summary"]:
+            if compontent["summary"] == event["summary"] and compontent["dtstart"] == event["dtstart"]:
                 can_add = False
 
         if can_add:
-            print(event["summary"])
+            print("    " + event["summary"])
             calendar.add_component(event)
 
     save_calendar(calendar, calendar_path)
