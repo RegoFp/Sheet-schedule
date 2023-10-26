@@ -98,8 +98,16 @@ def read_ee_schedule():
 
     date_regex = re.compile(r'(\w+) (\d+)\w+ \| (\w+) \| (\d+):(\d+)\w+ (\w+)')
 
-    # Searches for all boxes with a date
-    cells = sh.get_worksheet(0).findall(date_regex, in_column=4)
+    while True:
+        # Searches for all boxes with a date
+        try:
+            cells = sh.get_worksheet(0).findall(date_regex, in_column=4)
+            break
+        except gspread.exceptions.APIError:
+            print("API limit reached, waiting 70 seconds")
+            time.sleep(70)
+
+
 
     print("  new events:")
     for cell in cells:
@@ -159,8 +167,14 @@ def read_emiru_schedule():
         'https://docs.google.com/spreadsheets/d/1WFuxI2R5iLzt7x0k1LVV9Te5uQEb2X6CS5vc_VYC-AQ/edit#gid=2084945952')
 
     regex = re.compile(r"\d{2}/\d{2}")
+    while True:
+        try:
+            cells = sh.get_worksheet(0).findall(regex, in_column=2)
+            break
+        except gspread.exceptions.APIError:
+            print("API limit reached, waiting 70 seconds")
+            time.sleep(70)
 
-    cells = sh.get_worksheet(0).findall(regex, in_column=2)
     print("  new events:")
     for cell in cells:
         while True:
