@@ -207,7 +207,7 @@ def read_emiru_schedule():
 
         # TODO turn this into a method, since ee and emiru use it
         for compontent in calendar.walk("VEVENT"):
-            if compontent["summary"] == event["summary"] and compontent["dtstart"] == event["dtstart"]:
+            if compontent["dtstart"] == event["dtstart"]:
                 can_add = False
 
         if can_add:
