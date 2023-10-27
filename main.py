@@ -8,14 +8,17 @@ from icalendar import Calendar, Event, vText
 from os.path import exists
 import os
 
-from dateutil import parser
+from dateutil import parser, tz
+
+us_tzinfos = {
+    "CT": tz.gettz("US/Central"),
+    "PT": tz.gettz("US/Pacific")
+}
 
 
 def read_day(box, sh):
     time_str = sh.sheet1.cell(box + 1, 5).value
-    time_str = time_str.replace("CT", "UTC-5")
-    time_str = time_str.replace("PT", "UTC-6")
-    date_object = parser.parse(time_str)
+    date_object = parser.parse(time_str, tzinfos=us_tzinfos)
 
     date_str = sh.sheet1.cell(box, 2).value  # month/day
     month = int(date_str.split("/")[0])
@@ -116,10 +119,8 @@ def read_ee_schedule():
                 date_string = cell.value.split("|")
 
                 date_string = date_string[0][:-3] + date_string[2]
-                date_string = date_string.replace("CT", "UTC-5")
-                date_string = date_string.replace("PT", "UTC-6")
 
-                datetime_object = parser.parse(date_string)
+                datetime_object = parser.parse(date_string, tzinfos=us_tzinfos)
 
                 title_string = sh.get_worksheet(0).cell(cell.row + 3, 4).value
 
@@ -167,6 +168,8 @@ def read_emiru_schedule():
         'https://docs.google.com/spreadsheets/d/1WFuxI2R5iLzt7x0k1LVV9Te5uQEb2X6CS5vc_VYC-AQ/edit#gid=2084945952')
 
     regex = re.compile(r"\d{2}/\d{2}")
+
+
     while True:
         try:
             cells = sh.get_worksheet(0).findall(regex, in_column=2)
@@ -180,10 +183,8 @@ def read_emiru_schedule():
         while True:
             try:
                 date_string = sh.get_worksheet(0).cell(cell.row + 1, cell.col + 3).value
-                date_string = date_string.replace("CT", "UTC-5")
-                date_string = date_string.replace("PT", "UTC-6")
 
-                datetime_object = parser.parse(cell.value + " " + date_string)
+                datetime_object = parser.parse(cell.value + " " + date_string, tzinfos=us_tzinfos)
 
                 title_string = sh.get_worksheet(0).cell(cell.row, cell.col + 3).value
 
@@ -207,7 +208,7 @@ def read_emiru_schedule():
 
         # TODO turn this into a method, since ee and emiru use it
         for compontent in calendar.walk("VEVENT"):
-            if compontent["dtstart"] == event["dtstart"]:
+            if compontent.get("dtstart").dt == event["dtstart"].dt:
                 can_add = False
 
         if can_add:
@@ -224,7 +225,7 @@ def load_calendar(calendar_path):
     if not exists(calendar_path):
         calendar.add('prodid', 'dregoc')
         calendar.add('version', '2.0')
-        calendar.add('TZID', 'US/Central')
+        calendar.add('TZID', 'UTC-5')
 
         f = open(os.path.join(calendar_path), 'wb')
         f.write(calendar.to_ical())
