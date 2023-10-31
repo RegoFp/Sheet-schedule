@@ -24,8 +24,8 @@ def read_day(box, sh):
     month = int(date_str.split("/")[0])
     day = int(date_str.split("/")[1])
 
-    date_object = date_object.replace(month=month)
     date_object = date_object.replace(day=day)
+    date_object = date_object.replace(month=month)
     date_object = date_object.replace(datetime.today().year)
     date_object = date_object.replace(tzinfo=pytz.timezone('US/Central'))
 
@@ -110,8 +110,6 @@ def read_ee_schedule():
             print("API limit reached, waiting 70 seconds")
             time.sleep(70)
 
-
-
     print("  new events:")
     for cell in cells:
         while True:
@@ -168,7 +166,6 @@ def read_emiru_schedule():
         'https://docs.google.com/spreadsheets/d/1WFuxI2R5iLzt7x0k1LVV9Te5uQEb2X6CS5vc_VYC-AQ/edit#gid=2084945952')
 
     regex = re.compile(r"\d{2}/\d{2}")
-
 
     while True:
         try:
@@ -251,7 +248,6 @@ def load_calendar(calendar_path):
 
 # Saves the calendar
 def save_calendar(cal, calendar_path):
-
     # If the calendar already exists deletes it
     if exists(calendar_path):
         os.remove(calendar_path)
