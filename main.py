@@ -3,7 +3,6 @@ import time
 from datetime import datetime
 
 import gspread
-import pytz
 from icalendar import Calendar, Event, vText
 from os.path import exists
 import os
@@ -17,25 +16,26 @@ us_tzinfos = {
 
 
 def read_day(box, sh):
+    # Get time
     time_str = sh.sheet1.cell(box + 1, 5).value
-    date_object = parser.parse(time_str, tzinfos=us_tzinfos)
 
+    time_object = parser.parse(time_str, tzinfos=us_tzinfos)
+
+    # Get date
     date_str = sh.sheet1.cell(box, 2).value  # month/day
-    month = int(date_str.split("/")[0])
-    day = int(date_str.split("/")[1])
 
-    date_object = date_object.replace(day=day)
-    date_object = date_object.replace(month=month)
-    date_object = date_object.replace(datetime.today().year)
-    date_object = date_object.replace(tzinfo=pytz.timezone('US/Central'))
+    # Combine date and time
+    date_object = parser.parse(date_str, tzinfos=us_tzinfos)
 
+    date_object = datetime.combine(date_object, time_object.time(), tzinfo=date_object.tzinfo)
+
+    # Create event object
     event = Event()
     event.add('summary', sh.sheet1.cell(box + 2, 5).value)
     event.add('description', "https://www.twitch.tv/mizkif")
     event.add('dtstart', date_object)
 
     print("    " + event["summary"])
-    # Add stream
 
     return event
 
@@ -203,7 +203,6 @@ def read_emiru_schedule():
 
         can_add = True
 
-        # TODO turn this into a method, since ee and emiru use it
         for compontent in calendar.walk("VEVENT"):
             if compontent.get("dtstart").dt == event["dtstart"].dt:
                 can_add = False
@@ -264,5 +263,5 @@ if __name__ == '__main__':
     print("ExtraEmily")
     read_ee_schedule()
 
-    print("Emiru")
+    print("Emiry")
     read_emiru_schedule()
