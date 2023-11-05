@@ -2,6 +2,7 @@ import re
 import time
 from datetime import datetime
 
+import dateutil.parser
 import gspread
 from icalendar import Calendar, Event, vText
 from os.path import exists
@@ -181,7 +182,11 @@ def read_emiru_schedule():
             try:
                 date_string = sh.get_worksheet(0).cell(cell.row + 1, cell.col + 3).value
 
-                datetime_object = parser.parse(cell.value + " " + date_string, tzinfos=us_tzinfos)
+                try:
+                    datetime_object = parser.parse(cell.value + " " + date_string, tzinfos=us_tzinfos)
+                except dateutil.parser.ParserError:
+                    print("     No time, defaulted to 4 pm:")
+                    datetime_object = parser.parse("4:00 PM CT", tzinfos=us_tzinfos)
 
                 title_string = sh.get_worksheet(0).cell(cell.row, cell.col + 3).value
 
@@ -263,5 +268,5 @@ if __name__ == '__main__':
     print("ExtraEmily")
     read_ee_schedule()
 
-    print("Emiry")
+    print("Emiru")
     read_emiru_schedule()
