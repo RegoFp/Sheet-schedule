@@ -24,11 +24,10 @@ def read_day(box, sh):
 
     # Get date
     date_str = sh.sheet1.cell(box, 2).value  # month/day
-
     # Combine date and time
     date_object = parser.parse(date_str, tzinfos=us_tzinfos)
 
-    date_object = datetime.combine(date_object, time_object.time(), tzinfo=date_object.tzinfo)
+    date_object = datetime.combine(date_object, time_object.time(), tzinfo=time_object.tzinfo)
 
     # Create event object
     event = Event()
@@ -265,8 +264,8 @@ if __name__ == '__main__':
     print("Miz")
     read_miz_schedule()
 
-    print("ExtraEmily")
-    read_ee_schedule()
-
-    print("Emiru")
-    read_emiru_schedule()
+    # print("ExtraEmily")
+    # read_ee_schedule()
+    #
+    # print("Emiru")
+    # read_emiru_schedule()
