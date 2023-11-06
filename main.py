@@ -264,8 +264,8 @@ if __name__ == '__main__':
     print("Miz")
     read_miz_schedule()
 
-    # print("ExtraEmily")
-    # read_ee_schedule()
-    #
-    # print("Emiru")
-    # read_emiru_schedule()
+    print("ExtraEmily")
+    read_ee_schedule()
+
+    print("Emiru")
+    read_emiru_schedule()
