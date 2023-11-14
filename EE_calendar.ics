@@ -90,14 +90,16 @@ DESCRIPTION:twitch.tv/nmplol\nin the kitchen wrist twisting like a stir fr
  y!!
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:STREAM
-DTSTART;TZID=US/Central:20231115T170000
-DESCRIPTION::)
+SUMMARY:SHOPPING FOR WILD WEST W/ CINNA AND BRITT! :D
+DTSTART;TZID=US/Central:20231114T180000
+DESCRIPTION:we have a $500 budget each and we're gonna buy clothes for wil
+ d west WOOOOO SO EXCITING
 END:VEVENT
 BEGIN:VEVENT
 SUMMARY:BUS TRIP TO WILD WILD WEST
 DTSTART;TZID=US/Central:20231116T130000
 DESCRIPTION:very kind of nick and malena to let us have the FIRST STREAM O
- F WILD WILD WEST:D IT WILL BE A PARTAAYYYY
+ F WILD WILD WEST:D IT WILL BE A PARTAAYYYY\n\ncheck out all the rest of th
+ e wild west streams at watchwildwest.com
 END:VEVENT
 END:VCALENDAR
