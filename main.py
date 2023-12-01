@@ -162,8 +162,15 @@ def read_emiru_schedule():
 
     gc = gspread.service_account(filename="tmp/service_account.json")
 
-    sh = gc.open_by_url(
-        'https://docs.google.com/spreadsheets/d/1WFuxI2R5iLzt7x0k1LVV9Te5uQEb2X6CS5vc_VYC-AQ/edit#gid=2084945952')
+    while True:
+        try:
+            sh = gc.open_by_url(
+                'https://docs.google.com/spreadsheets/d/1WFuxI2R5iLzt7x0k1LVV9Te5uQEb2X6CS5vc_VYC-AQ/edit#gid=2084945952')
+            break
+        except gspread.exceptions.APIError:
+            print("API limit reached, waiting 70 seconds")
+            time.sleep(70)
+
 
     regex = re.compile(r"\d{2}/\d{2}")
 
