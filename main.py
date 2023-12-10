@@ -17,17 +17,22 @@ us_tzinfos = {
 
 
 def read_day(box, sh):
-    # Get time
-    time_str = sh.sheet1.cell(box + 1, 5).value
 
-    time_object = parser.parse(time_str, tzinfos=us_tzinfos)
+    # Get time
+
+
+    time_str = sh.sheet1.cell(box + 1, 5).value
+    print(time_str)
+    if time_str is not " ":
+        time_object = parser.parse(time_str, tzinfos=us_tzinfos)
 
     # Get date
     date_str = sh.sheet1.cell(box, 2).value  # month/day
     # Combine date and time
     date_object = parser.parse(date_str, tzinfos=us_tzinfos)
 
-    date_object = datetime.combine(date_object, time_object.time(), tzinfo=time_object.tzinfo)
+    if time_str is not " ":
+        date_object = datetime.combine(date_object, time_object.time(), tzinfo=time_object.tzinfo)
 
     # Create event object
     event = Event()
