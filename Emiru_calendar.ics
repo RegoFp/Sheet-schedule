@@ -810,4 +810,10 @@ DTSTART;TZID=US/Central:20250326T160000
 DESCRIPTION:Going home for the holidays spendin time with family. Next str
  eam will be on the 28th at the earliest!
 END:VEVENT
+BEGIN:VEVENT
+SUMMARY:☃️CHRISTMAS BREAK
+DTSTART;TZID=US/Central:20250327T160000
+DESCRIPTION:Going home for the holidays spendin time with family. Next str
+ eam will be on the 28th at the earliest!
+END:VEVENT
 END:VCALENDAR
