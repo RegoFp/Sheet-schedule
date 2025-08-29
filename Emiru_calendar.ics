@@ -1695,6 +1695,11 @@ DTSTART;TZID=US/Central:20250827T160000
 DESCRIPTION:i can't believe its almost christmas
 END:VEVENT
 BEGIN:VEVENT
+SUMMARY:🎄 CHRISTMAS BREAK!!!!!!!!!!!!! 🎅🎁🍗
+DTSTART;TZID=US/Central:20250828T160000
+DESCRIPTION:i can't believe its almost christmas
+END:VEVENT
+BEGIN:VEVENT
 SUMMARY:💜 TWITCHCON!!!
 DTSTART;TZID=US/Central:20251017T000000
 DESCRIPTION:big plans
@@ -1707,7 +1712,7 @@ DESCRIPTION:my live twitchcon show!! very nervous think i may also be IRLi
 END:VEVENT
 BEGIN:VEVENT
 SUMMARY:🎄 CHRISTMAS BREAK!!!!!!!!!!!!! 🎅🎁🍗
-DTSTART;TZID=US/Central:20250828T160000
+DTSTART;TZID=US/Central:20250829T160000
 DESCRIPTION:i can't believe its almost christmas
 END:VEVENT
 END:VCALENDAR
