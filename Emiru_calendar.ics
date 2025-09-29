@@ -1850,6 +1850,11 @@ DTSTART;TZID=US/Central:20250927T160000
 DESCRIPTION:i can't believe its almost christmas
 END:VEVENT
 BEGIN:VEVENT
+SUMMARY:🎄 CHRISTMAS BREAK!!!!!!!!!!!!! 🎅🎁🍗
+DTSTART;TZID=US/Central:20250928T160000
+DESCRIPTION:i can't believe its almost christmas
+END:VEVENT
+BEGIN:VEVENT
 SUMMARY:🔥 COSPLAY WITH JASON AND ADAPT
 DTSTART;TZID=US/Central:20251010T160000
 DESCRIPTION:doing another anime cosplay group in LA
@@ -1867,7 +1872,7 @@ DESCRIPTION:my live twitchcon show!! very nervous think i may also be IRLi
 END:VEVENT
 BEGIN:VEVENT
 SUMMARY:🎄 CHRISTMAS BREAK!!!!!!!!!!!!! 🎅🎁🍗
-DTSTART;TZID=US/Central:20250928T160000
+DTSTART;TZID=US/Central:20250929T160000
 DESCRIPTION:i can't believe its almost christmas
 END:VEVENT
 END:VCALENDAR
