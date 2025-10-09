@@ -1900,24 +1900,30 @@ DTSTART;TZID=US/Central:20251007T160000
 DESCRIPTION:i can't believe its almost christmas
 END:VEVENT
 BEGIN:VEVENT
+SUMMARY:🎄 CHRISTMAS BREAK!!!!!!!!!!!!! 🎅🎁🍗
+DTSTART;TZID=US/Central:20251008T160000
+DESCRIPTION:i can't believe its almost christmas
+END:VEVENT
+BEGIN:VEVENT
 SUMMARY:🔥 COSPLAY WITH JASON AND ADAPT
 DTSTART;TZID=US/Central:20251010T160000
-DESCRIPTION:doing another anime cosplay group in LA
+DESCRIPTION:doing another anime cosplay group in LA then afterwards going 
+ out in LA with cinna :)
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:⭐ RV ROADTRIP TO TWITCHCON FT. EXTRAEMILY CINNA AND BONNIE!!!!
+DTSTART;TZID=US/Central:20251009T160000
+DESCRIPTION:girls trip woohoo!!!!!
 END:VEVENT
 BEGIN:VEVENT
 SUMMARY:💜 TWITCHCON!!!
 DTSTART;TZID=US/Central:20251017T000000
-DESCRIPTION:big plans
+DESCRIPTION:meet and greet friday
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:💜 COSPLAY! FT. BBNO$ AND A BUNCH OF PPL @ TWITCHCON
-DTSTART;TZID=US/Central:20251018T160000
-DESCRIPTION:my live twitchcon show!! very nervous think i may also be IRLi
- ng before this
-END:VEVENT
-BEGIN:VEVENT
-SUMMARY:🎄 CHRISTMAS BREAK!!!!!!!!!!!!! 🎅🎁🍗
-DTSTART;TZID=US/Central:20251008T160000
-DESCRIPTION:i can't believe its almost christmas
+SUMMARY:💙 ALWAYS ON IN SAN DIEGO
+DTSTART;TZID=US/Central:20251018T110000
+DESCRIPTION:always on ep with emily\, probably wont costream it cus of sho
+ w later but will be on emilys channel
 END:VEVENT
 END:VCALENDAR
